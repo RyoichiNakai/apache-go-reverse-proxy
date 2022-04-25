@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+
+  # ポート8000でリッスンしているサーバ
+  # go_app:
+
+  reverse-proxy:
+    image: httpd:latest
+    ports: 
+      - 8080:80
+    volumes:
+      - ./apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
