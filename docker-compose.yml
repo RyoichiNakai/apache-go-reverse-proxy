@@ -3,7 +3,10 @@ version: '2'
 services:
 
   # ポート8000でリッスンしているサーバ
-  # go_app:
+  go-app:
+    build: 
+      context: ./go
+      dockerfile: Dockerfile
 
   reverse-proxy:
     image: httpd:latest
@@ -11,3 +14,7 @@ services:
       - 8080:80
     volumes:
       - ./apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
+    environment:
+      PROXY_PATH: /
+      PROXY_URL: http:go-app:8080/
+      USER_ID: "forwarder"
