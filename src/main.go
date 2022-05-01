@@ -2,13 +2,14 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"time"
 	"math/rand"
+	"net/http"
+	"time"
 )
 
 // constでおみくじのリストを作成できない
 // 代わりに関数を使い初期化
-func getOmikuArray() []string {
+func getOmikujiArray() []string {
 	return []string{"大吉", "吉", "中吉", "小吉", "末吉", "凶", "大凶"}
 }
 
@@ -20,15 +21,27 @@ func generateRandomNum(maxSize int) int {
 
 func handleOmikuji(ctx *gin.Context) {
 	// おみくじの結果を返す
-	omikujiResult := getOmikuArray() 
+	omikujiResult := getOmikujiArray()
+	randNum := generateRandomNum(len(omikujiResult))
+	ctx.JSON(http.StatusOK, gin.H{
+		"res": omikujiResult[randNum],
+	})
+}
 
-	ctx.Writer.WriteString(omikujiResult[generateRandomNum(len(omikujiResult))])
+func setupServer() *gin.Engine {
+	engine := gin.Default()
+
+	engine.GET("/", handleOmikuji)
+
+	err := engine.Run(":3000")
+	if err != nil {
+		return nil
+	}
+	return engine
 }
 
 func main() {
-	engine := gin.Default()
-	
-	engine.GET("/", handleOmikuji)
-
-	engine.Run(":3000")
+	if err := setupServer().Run(); err != nil {
+		return
+	}
 }
